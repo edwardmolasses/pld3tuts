@@ -1,0 +1,21 @@
+{
+  "name": "react-training",
+  "version": "1.0.0",
+  "description": "How-to setup Webpack on an ES6 React Application with SASS?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react",
+    "training"
+  ],
+  "author": "edward molasses",
+  "license": "MIT",
+  "devDependencies": {
+    "jsx-loader": "^0.13.2",
+    "react": "^15.4.2",
+    "webpack": "^1.14.0",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
