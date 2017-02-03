@@ -1,5 +1,5 @@
-var h = 100;
-var w = 300;
+var h = 500;
+var w = 900;
 var padding = 20;
 
 function getDate(d) {
@@ -43,9 +43,6 @@ function buildLine(ds) {
 	var viz = svg.append("path")
 				.attr({
 					d: lineFun(ds.monthlySales), 
-					"stroke": "purple",
-					"stroke-width": 2,
-					"fill": "none",
 					"class": "path-" + ds.category
 				});
 }
