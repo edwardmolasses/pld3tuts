@@ -35,14 +35,17 @@ function getSvg(attr) {
 
 function buildLine(ds) {
 	var minDate = getDate(ds.monthlySales[0]['month']);
-	var maxDate = getDate(ds.monthlySales[ds.monthlySales.length-1]['month']);
-	var xScale = getScale(minDate, maxDate, padding+5, w-padding);
-	var yScale = getScale(0, d3.max(ds.monthlySales, function(d) { return d.sales; }), h-padding, 10);
+	var maxDate = getDate(ds.monthlySales[ds.monthlySales.length - 1]['month']);
+	var tooltip = d3.select("body").append("div")
+		.attr("class","tooltip")
+		.style("opacity", 0);
+	var xScale = getScale(minDate, maxDate, padding + 5, w - padding);
+	var yScale = getScale(0, d3.max(ds.monthlySales, function(d) { return d.sales; }), h - padding, 10);
 	var xAxisGen = getAxisGen(xScale, "bottom", d3.time.format("%b"), null);
 	var yAxisGen = getAxisGen(yScale, "left", null, 4);
 	var lineFun = getLineFun(xScale, yScale);
 
-	var svg = d3.select("body").append("svg").attr({width: w, height: h, "id": "svg-"+ds.category});
+	var svg = d3.select("body").append("svg").attr({width: w, height: h, "id": "svg-" + ds.category});
 
 	var yAxis = svg.append("g").call(yAxisGen)
 				.attr("class", "y-axis")
@@ -57,13 +60,38 @@ function buildLine(ds) {
 					d: lineFun(ds.monthlySales),
 					"class": "path-" + ds.category
 				});
+				
+	var dots = svg.selectAll("circle")
+		.data(ds.monthlySales)
+		.enter()
+		.append("circle")
+		.attr({
+			cx: function(d) {return xScale(getDate(d.month)); },
+			cy: function(d) {return yScale(d.sales); },
+			r:4,
+			"fill": "#666",
+			class: "circle-" + ds.category
+		})
+		.on("mouseover", function(d) {
+			tooltip.transition()
+				.duration(500)
+				.style("opacity", .85)
+			tooltip.html("<strong>Sales $" + d.sales + "K</strong>")
+				.style("left", (d3.event.pageX) + "px")
+				.style("top", (d3.event.pageY - 28) + "px");
+		})
+		.on("mouseout", function(d) {
+			tooltip.transition()
+				.duration(300)
+				.style("opacity", 0);
+		});
 }
 
 function updateLine(ds) {
 	var minDate = getDate(ds.monthlySales[0]['month']);
-	var maxDate = getDate(ds.monthlySales[ds.monthlySales.length-1]['month']);
-	var xScale = getScale(minDate, maxDate, padding+5, w-padding);
-	var yScale = getScale(0, d3.max(ds.monthlySales, function(d) { return d.sales; }), h-padding, 10);
+	var maxDate = getDate(ds.monthlySales[ds.monthlySales.length - 1]['month']);
+	var xScale = getScale(minDate, maxDate, padding + 5, w - padding);
+	var yScale = getScale(0, d3.max(ds.monthlySales, function(d) { return d.sales; }), h - padding, 10);
 	var xAxisGen = getAxisGen(xScale, "bottom", d3.time.format("%b"), ds.monthlySales.length - 1);
 	var yAxisGen = getAxisGen(xScale, "left", null, 4);
 	var lineFun  = getLineFun(xScale, yScale);
@@ -81,6 +109,12 @@ function updateLine(ds) {
 				.attr({
 					d: lineFun(ds.monthlySales)
 				});
+
+	var dots = svg.selectAll(".circle-" + ds.category)
+		.attr({
+			cx: function(d) {return xScale(getDate(d.month)); },
+			cy: function(d) {return yScale(d.sales); }
+		});
 }
 
 d3.json("https://api.github.com/repos/bsullins/d3js-resources/contents/monthlySalesbyCategoryMultiple.json", function(error, data) {
@@ -100,7 +134,7 @@ d3.json("https://api.github.com/repos/bsullins/d3js-resources/contents/monthlySa
 			var decodedData = JSON.parse(window.atob(data.content));
 
 			decodedData.contents.forEach(function(ds){
-				ds.monthlySales.splice(0,ds.monthlySales.length-sel);
+				ds.monthlySales.splice(0,ds.monthlySales.length - sel);
 				updateLine(ds);
 			});
 		});
