@@ -50,7 +50,6 @@ function buildLine(ds) {
 	var yAxis = svg.append("g").call(yAxisGen)
 				.attr("class", "y-axis")
 				.attr("transform", "translate(" + padding + ",0)");
-
 	var xAxis = svg.append("g").call(xAxisGen)
 				.attr("class", "x-axis")
 				.attr("transform", "translate(0," + (h - padding) + ")");
@@ -99,7 +98,6 @@ function updateLine(ds) {
 	var svg = d3.select("body").select("#svg-" + ds.category);
 
 	var yAxis = svg.selectAll("g.y-axis").call(yAxisGen);
-
 	var xAxis = svg.selectAll("g.x-axis").call(xAxisGen);
 
 	var viz = svg.selectAll(".path-" + ds.category)
